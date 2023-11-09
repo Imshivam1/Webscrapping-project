@@ -1,0 +1,86 @@
+Let's break down each line of code:
+
+```python
+# Import necessary libraries
+import requests
+from bs4 import BeautifulSoup
+```
+
+- `import requests`: Imports the `requests` library, which is used to send HTTP requests.
+- `from bs4 import BeautifulSoup`: Imports the `BeautifulSoup` class from the `bs4` library, which is used for HTML parsing.
+
+```python
+# Function to scrape quotes from a website
+def scrape_quotes():
+    # Send a GET request to the website
+    url = "http://quotes.toscrape.com"
+    response = requests.get(url)
+```
+
+- `def scrape_quotes():`: Defines a function named `scrape_quotes`.
+- `url = "http://quotes.toscrape.com"`: Sets the URL of the website to be scraped.
+- `response = requests.get(url)`: Sends a GET request to the specified URL and stores the response.
+
+```python
+    if response.status_code == 200:
+        # Parse the HTML content of the page
+        soup = BeautifulSoup(response.text, 'html.parser')
+```
+
+- `if response.status_code == 200:`: Checks if the HTTP response status code is 200 (OK), indicating a successful request.
+- `soup = BeautifulSoup(response.text, 'html.parser')`: Creates a BeautifulSoup object to parse the HTML content of the page.
+
+```python
+        # Extract information (quotes and authors) from the page
+        quotes = []
+        for quote in soup.find_all('div', class_='quote'):
+            text = quote.find('span', class_='text').text
+            author = quote.find('small', class_='author').text
+            quotes.append({'text': text, 'author': author})
+```
+
+- `quotes = []`: Initializes an empty list to store the extracted quotes and authors.
+- `for quote in soup.find_all('div', class_='quote'):`: Iterates through each quote `div` element on the page.
+- `text = quote.find('span', class_='text').text`: Extracts the text of the quote.
+- `author = quote.find('small', class_='author').text`: Extracts the author of the quote.
+- `quotes.append({'text': text, 'author': author})`: Appends a dictionary with the quote text and author to the `quotes` list.
+
+```python
+        return quotes
+    else:
+        print("Failed to retrieve the page. Status code:", response.status_code)
+        return None
+```
+
+- `return quotes`: Returns the list of extracted quotes if the request was successful.
+- `else:`: If the request was not successful:
+  - `print("Failed to retrieve the page. Status code:", response.status_code)`: Prints an error message with the HTTP status code.
+  - `return None`: Returns `None` to indicate that web scraping failed.
+
+```python
+if __name__ == "__main__":
+    # Run the web scraping function
+    scraped_quotes = scrape_quotes()
+```
+
+- `if __name__ == "__main__":`: Checks if the script is being run directly (not imported as a module).
+- `scraped_quotes = scrape_quotes()`: Calls the `scrape_quotes` function and stores the result in the `scraped_quotes` variable.
+
+```python
+    # Display the results
+    if scraped_quotes:
+        print("Scraped Quotes:")
+        for index, quote in enumerate(scraped_quotes, start=1):
+            print(f"{index}. {quote['text']} - {quote['author']}")
+    else:
+        print("Web scraping failed.")
+```
+
+- `if scraped_quotes:`: Checks if quotes were successfully scraped.
+- `print("Scraped Quotes:")`: Prints a header.
+- `for index, quote in enumerate(scraped_quotes, start=1):`: Iterates through the scraped quotes with an index, starting from 1.
+- `print(f"{index}. {quote['text']} - {quote['author']}")`: Prints each quote with its index, text, and author.
+- `else:`: If web scraping failed:
+  - `print("Web scraping failed.")`: Prints an error message.
+
+This script demonstrates a basic web scraping process, fetching quotes from a website and displaying them.
